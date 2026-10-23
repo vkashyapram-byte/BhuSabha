@@ -85,6 +85,7 @@ fun CitizenProfileScreen(
     viewModel: BhuSabhaViewModel,
     onBack: () -> Unit,
     onNavigateHome: () -> Unit,
+    onNavigateNewRegistration: () -> Unit = {},
     onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -119,11 +120,14 @@ fun CitizenProfileScreen(
                 onTabSelected = { tab ->
                     if (tab == CitizenTab.HOME || tab == CitizenTab.PROPERTIES) {
                         onNavigateHome()
+                    } else if (tab == CitizenTab.SERVICES) {
+                        onNavigateNewRegistration()
                     }
                 }
             )
         }
-    ) { innerPadding ->
+    )
+ { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()

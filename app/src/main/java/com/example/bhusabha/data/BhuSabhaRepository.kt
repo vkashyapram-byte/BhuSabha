@@ -5,6 +5,7 @@ import com.example.bhusabha.model.MutationApplication
 import com.example.bhusabha.model.MutationStatus
 import com.example.bhusabha.model.OfficialUser
 import com.example.bhusabha.model.Parcel
+import com.example.bhusabha.model.RegistrationFormData
 import com.example.bhusabha.model.UserPersona
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class BhuSabhaRepository {
+
+    private val _registrationDraft = MutableStateFlow(RegistrationFormData())
+    val registrationDraft: StateFlow<RegistrationFormData> = _registrationDraft.asStateFlow()
 
     private val _currentPersona = MutableStateFlow(UserPersona.GUEST)
     val currentPersona: StateFlow<UserPersona> = _currentPersona.asStateFlow()
@@ -259,5 +263,49 @@ class BhuSabhaRepository {
             it.ownerName.lowercase().contains(q) ||
             it.village.lowercase().contains(q)
         }
+    }
+
+    fun updateRegistrationDraft(transform: (RegistrationFormData) -> RegistrationFormData) {
+        _registrationDraft.update(transform)
+    }
+
+    fun submitRegistrationApplication(
+        formData: RegistrationFormData,
+        buyerUser: CitizenUser
+    ): MutationApplication {
+        val newId = "MUT-2026-9102"
+        val application = MutationApplication(
+            id = newId,
+            ulpin = formData.ulpin,
+            applicantName = buyerUser.name,
+            currentOwner = formData.sellerName,
+            proposedOwner = buyerUser.name,
+            deedType = "${formData.deedType.label} Transfer",
+            submissionDate = "Today",
+            status = MutationStatus.PENDING_INSPECTION,
+            riskScore = 8,
+            discrepancyNote = null
+        )
+        _mutations.update { listOf(application) + it }
+
+        val newParcel = Parcel(
+            ulpin = formData.ulpin,
+            surveyNumber = formData.surveyNumber,
+            ownerName = buyerUser.name,
+            village = formData.subDivision,
+            taluka = "Haveli",
+            district = "Pune",
+            state = "Maharashtra",
+            areaHectares = formData.calculatedArea,
+            landType = "Agricultural (Irrigated)",
+            healthScore = 98,
+            encumbranceText = "Mutation in Progress ($newId)",
+            taxAnnual = 5200.0,
+            taxPaid = true,
+            mutationStatus = "Pending Inspection",
+            lastUpdated = "Today"
+        )
+        _parcels.update { listOf(newParcel) + it }
+        return application
     }
 }

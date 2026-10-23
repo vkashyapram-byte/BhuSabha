@@ -47,21 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bhusabha.model.Parcel
-import com.example.bhusabha.theme.GovBg
-import com.example.bhusabha.theme.GovBlue
-import com.example.bhusabha.theme.GovBlueLight
-import com.example.bhusabha.theme.GovCardBorder
-import com.example.bhusabha.theme.GovEmerald
-import com.example.bhusabha.theme.GovEmeraldDark
-import com.example.bhusabha.theme.GovEmeraldLight
-import com.example.bhusabha.theme.GovNavy
-import com.example.bhusabha.theme.GovSaffron
-import com.example.bhusabha.theme.GovSlate400
-import com.example.bhusabha.theme.GovSlate500
-import com.example.bhusabha.theme.GovSlate600
-import com.example.bhusabha.theme.GovSlate700
-import com.example.bhusabha.theme.GovSlate900
-import com.example.bhusabha.theme.GovSurface
+import com.example.bhusabha.theme.*
+
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Scaffold
@@ -71,6 +60,7 @@ fun CitizenDashboardScreen(
     viewModel: BhuSabhaViewModel,
     onLogout: () -> Unit,
     onNavigateProfile: () -> Unit = {},
+    onNavigateNewRegistration: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val citizenUser by viewModel.citizenUser.collectAsState()
@@ -85,6 +75,8 @@ fun CitizenDashboardScreen(
                 onTabSelected = { tab ->
                     if (tab == CitizenTab.PROFILE) {
                         onNavigateProfile()
+                    } else if (tab == CitizenTab.SERVICES) {
+                        onNavigateNewRegistration()
                     }
                 }
             )
@@ -270,6 +262,65 @@ fun CitizenDashboardScreen(
                                 )
                             }
                         }
+                    }
+                }
+            }
+
+            // Quick Action: Register New Property
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateNewRegistration() },
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = GovSaffronLight),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, GovSaffron.copy(alpha = 0.35f))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(CircleShape)
+                                    .background(GovSaffron),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                            Column {
+                                Text(
+                                    text = "New Property Registration",
+                                    color = GovNavy,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "4-Step Cadastral Mutation & AI Deed Scan",
+                                    color = GovSaffronDark,
+                                    fontSize = 11.sp
+                                )
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = GovSaffron,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
             }

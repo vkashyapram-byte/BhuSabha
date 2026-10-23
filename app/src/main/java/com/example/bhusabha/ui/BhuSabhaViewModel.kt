@@ -7,6 +7,7 @@ import com.example.bhusabha.model.CitizenUser
 import com.example.bhusabha.model.MutationApplication
 import com.example.bhusabha.model.OfficialUser
 import com.example.bhusabha.model.Parcel
+import com.example.bhusabha.model.RegistrationFormData
 import com.example.bhusabha.model.UserPersona
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +25,7 @@ class BhuSabhaViewModel(
     val officialUser: StateFlow<OfficialUser?> = repository.officialUser
     val isOfflineReady: StateFlow<Boolean> = repository.isOfflineReady
     val mutations: StateFlow<List<MutationApplication>> = repository.mutations
+    val registrationDraft: StateFlow<RegistrationFormData> = repository.registrationDraft
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -186,6 +188,19 @@ class BhuSabhaViewModel(
 
     fun raiseObjection(applicationId: String, reason: String) {
         repository.raiseObjection(applicationId, reason)
+    }
+
+    fun updateRegistrationDraft(transform: (RegistrationFormData) -> RegistrationFormData) {
+        repository.updateRegistrationDraft(transform)
+    }
+
+    fun submitRegistration(onSuccess: (MutationApplication) -> Unit) {
+        val app = repository.submitRegistrationApplication(
+            formData = registrationDraft.value,
+            buyerUser = citizenUser.value
+        )
+        syncToastMessage.value = "Application ${app.id} submitted for SRO Field Inspection"
+        onSuccess(app)
     }
 
     fun logout() {

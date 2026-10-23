@@ -18,6 +18,7 @@ import com.example.bhusabha.ui.OfficialLoginSheet
 import com.example.bhusabha.ui.PersonaWelcomeScreen
 
 import com.example.bhusabha.ui.CitizenProfileScreen
+import com.example.bhusabha.ui.NewRegistrationScreen
 
 @Composable
 fun MainNavigation(
@@ -48,6 +49,9 @@ fun MainNavigation(
                     onNavigateProfile = {
                         backStack.add(CitizenProfileNavKey)
                     },
+                    onNavigateNewRegistration = {
+                        backStack.add(NewRegistrationNavKey)
+                    },
                     onLogout = {
                         backStack.clear()
                         backStack.add(WelcomeNavKey)
@@ -68,9 +72,28 @@ fun MainNavigation(
                             backStack.removeAt(backStack.size - 1)
                         }
                     },
+                    onNavigateNewRegistration = {
+                        backStack.add(NewRegistrationNavKey)
+                    },
                     onLogout = {
                         backStack.clear()
                         backStack.add(WelcomeNavKey)
+                    },
+                    modifier = modifier
+                )
+            }
+            entry<NewRegistrationNavKey> {
+                NewRegistrationScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = {
+                        if (backStack.size > 1) {
+                            backStack.removeAt(backStack.size - 1)
+                        }
+                    },
+                    onComplete = {
+                        if (backStack.size > 1 && backStack.last() == NewRegistrationNavKey) {
+                            backStack.removeAt(backStack.size - 1)
+                        }
                     },
                     modifier = modifier
                 )

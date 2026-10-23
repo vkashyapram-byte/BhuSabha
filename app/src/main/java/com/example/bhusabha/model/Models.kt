@@ -82,3 +82,42 @@ enum class MutationStatus(val label: String) {
     APPROVED("Approved & RoR Updated"),
     DISCREPANCY_FLAGGED("Discrepancy Objection Flagged")
 }
+
+enum class DeedType(val label: String, val subtitle: String) {
+    SALE_DEED("Sale Deed", "Outright Purchase"),
+    INHERITANCE("Inheritance", "Succession / Legal Heir"),
+    GIFT_DEED("Gift Deed", "Familial Settlement"),
+    PARTITION("Partition", "Family Division")
+}
+
+data class RegistrationFormData(
+    val regDocNumber: String = "HAV-SR-2024-9102-A",
+    val sroOffice: String = "SRO Haveli-II, Pune",
+    val executionDate: String = "14-Nov-2024",
+    val sellerName: String = "Balwant Singh Thakur",
+    val sellerFatherName: String = "Late Jagat Singh Thakur",
+    val sellerAadhaarMasked: String = "•••• •••• 9012 (e-Verified)",
+    val sellerShare: String = "100% (Sole Transferor)",
+    val deedType: DeedType = DeedType.SALE_DEED,
+    val deedConsideration: Long = 3250000L,
+    val declaredValue: Long = 6500000L,
+    val surveyNumber: String = "142/3-B",
+    val subDivision: String = "Khed Shivapur",
+    val calculatedArea: Double = 2.40,
+    val ulpin: String = "MH-PUN-HAV-2024-8841",
+    val geodeticDatum: String = "WGS84 / UTM Zone 43N",
+    val ocrParsedPercent: Double = 99.8,
+    val isEsignConsentChecked: Boolean = true
+) {
+    val stampDuty: Long
+        get() = (declaredValue * 0.05).toLong()
+
+    val registrationFee: Long
+        get() = 30000L
+
+    val processingCess: Long
+        get() = 1500L
+
+    val totalPayable: Long
+        get() = stampDuty + registrationFee + processingCess
+}
