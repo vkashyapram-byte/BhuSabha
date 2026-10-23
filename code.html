@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>BhuSabha - National Digital Land Governance Platform</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Material Symbols Outlined Font -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            gov: {
+              navy: '#0b1e36',
+              blue: '#1e3a8a',
+              deep: '#172554',
+              saffron: '#ea580c',
+              saffronDark: '#c2410c',
+              emerald: '#059669',
+              amber: '#d97706',
+              crimson: '#dc2626',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .gis-grid {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, rgba(147, 197, 253, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(147, 197, 253, 0.35) 1px, transparent 1px);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .screen-fade {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 font-sans antialiased text-slate-800 flex justify-center items-center min-h-screen select-none">
+<!-- Mobile Frame Container -->
+<main class="w-full max-w-md mx-auto relative shadow-2xl h-[100dvh] bg-stone-50 overflow-hidden font-sans text-slate-800 flex flex-col border border-stone-300/40">
+<!-- Universal Status Bar -->
+<div class="h-6 w-full bg-slate-950 text-slate-300 text-xs px-4 flex items-center justify-between shrink-0 z-50 select-none">
+<span class="font-mono text-[11px] font-semibold tracking-tight" id="status-clock">09:41</span>
+<div class="flex items-center space-x-1.5 text-[14px]">
+<span class="material-symbols-outlined text-[13px] leading-none">network_cell</span>
+<span class="material-symbols-outlined text-[13px] leading-none">wifi</span>
+<span class="material-symbols-outlined text-[14px] leading-none">battery_5_bar</span>
+</div>
+</div>
+<!-- TOAST NOTIFICATION -->
+<div class="fixed top-8 left-1/2 -translate-x-1/2 w-11/12 max-w-xs bg-slate-900 text-white px-3.5 py-2.5 rounded-xl shadow-xl z-[999] flex items-center space-x-2.5 transition-all duration-300 transform -translate-y-24 opacity-0 pointer-events-none border border-slate-700" id="toast">
+<span class="material-symbols-outlined text-emerald-400 text-base" id="toast-icon">check_circle</span>
+<div class="text-[11px] leading-snug">
+<p class="font-semibold text-white" id="toast-title">Notice</p>
+<p class="text-slate-300 text-[10px]" id="toast-message">Action successful</p>
+</div>
+</div>
+<!-- ======================================================== -->
+<!-- SCREEN 1: Login / Persona Selection -->
+<!-- ======================================================== -->
+<section class="flex h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade justify-between p-6" id="login-screen">
+<!-- Top Bar with Android status bar styling + green offline-sync indicator pill -->
+<div class="flex items-center justify-between pt-1">
+<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-medium tracking-tight shadow-sm">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="">● Offline Ready (v3.2) - Auto-Sync Active</span>
+</div>
+<div class="flex items-center space-x-1 text-slate-400 text-[11px]">
+<span class="material-symbols-outlined text-xs">gavel</span>
+<span class="">Digital India</span>
+</div>
+</div>
+<!-- Center Logo & Branding -->
+<div class="flex flex-col items-center text-center my-auto py-4">
+<!-- Modern Emblem in Deep Blue & Saffron Gradient -->
+<div class="relative w-24 h-24 mb-4 flex items-center justify-center">
+<div class="absolute inset-0 bg-orange-500/20 rounded-3xl blur-lg"></div>
+<div class="relative w-20 h-20 bg-gradient-to-br from-blue-900 via-indigo-900 to-orange-600 rounded-2xl shadow-xl flex items-center justify-center border-2 border-white/80">
+<span class="material-symbols-outlined text-4xl text-white">balance</span>
+</div>
+<span class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-blue-950 font-bold shadow">
+<span class="material-symbols-outlined text-base">verified</span>
+</span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center justify-center gap-2">
+<h1 class="text-3xl font-extrabold tracking-tight text-blue-950">BhuSabha</h1>
+<span class="text-[11px] uppercase px-2 py-0.5 rounded-md bg-blue-900 text-white font-mono tracking-wider font-bold">GOV.IN</span>
+</div>
+<p class="text-xs font-bold tracking-wider uppercase text-emerald-700 pt-0.5">
+            NATIONAL DIGITAL LAND GOVERNANCE PLATFORM
+          </p>
+<p class="text-xs text-slate-500 pt-1 max-w-xs leading-relaxed">
+            Ministry of Rural Development &amp; Department of Land Resources. Unified registry, DILRMP spatial GIS, and cryptographic RoR verification.
+          </p>
+</div>
+<div class="mt-4 flex items-center justify-center space-x-2 text-[10px] text-slate-500 bg-white py-1 px-3.5 rounded-full border border-stone-200 shadow-sm">
+<span class="flex items-center gap-1 font-medium"><span class="material-symbols-outlined text-xs text-blue-800">security</span> Zero-Trust Cadastre</span>
+<span class="">•</span>
+<span class="flex items-center gap-1 font-medium"><span class="material-symbols-outlined text-xs text-orange-600">hub</span> NGDRS Synced</span>
+</div>
+</div>
+<!-- Action Persona Selection Cards -->
+<div class="space-y-3 pb-2">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest text-center">Select Portal Persona</p>
+<!-- Login as Citizen -->
+<button class="w-full bg-white hover:bg-stone-50 active:scale-[0.99] transition-all rounded-2xl p-4 flex items-center justify-between shadow-sm border border-stone-200/80 group text-left" onclick="navigateTo('citizen-home')">
+<div class="flex items-center space-x-3.5">
+<div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center group-hover:bg-blue-900 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">person</span>
+</div>
+<div>
+<p class="font-bold text-sm text-slate-900 leading-tight">Login as Citizen</p>
+<p class="text-xs text-slate-500 mt-0.5">View titles, e-Passbook &amp; mutation status</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-blue-900 group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</button>
+<!-- Login as Official -->
+<button class="w-full bg-white hover:bg-stone-50 active:scale-[0.99] transition-all rounded-2xl p-4 flex items-center justify-between shadow-sm border border-stone-200/80 group text-left" onclick="navigateTo('admin-home')">
+<div class="flex items-center space-x-3.5">
+<div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
+</div>
+<div>
+<p class="font-bold text-sm text-slate-900 leading-tight">Login as Official</p>
+<p class="text-xs text-slate-500 mt-0.5">Revenue Inspector, Tahsildar &amp; Sub-Registrar Portal</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-orange-600 group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</button>
+<p class="text-center text-[10px] text-slate-400 pt-1 font-medium">
+          Secured with Aadhaar OTP &amp; DigiLocker Integration
+        </p>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- SCREEN 2: Citizen Workflow Hub -->
+<!-- ======================================================== -->
+<section class="hidden h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade" id="citizen-home">
+<!-- Header -->
+<header class="bg-blue-900 text-white px-4 py-3 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-30">
+<div class="flex items-center space-x-2.5">
+<button class="p-1 rounded-lg hover:bg-white/10 text-white" onclick="showToast('Menu', 'Navigation drawer simulated')">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+<div class="flex items-center space-x-1.5">
+<div class="w-6 h-6 rounded-md bg-orange-500 text-white flex items-center justify-center text-xs font-bold">भू</div>
+<span class="font-bold text-base tracking-tight">BhuSabha</span>
+</div>
+</div>
+<div class="flex items-center space-x-2">
+<button class="p-1 text-blue-200 hover:text-white" onclick="navigateTo('login-screen')" title="Switch Persona">
+<span class="material-symbols-outlined text-xl">sync_alt</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-bold flex items-center justify-center text-xs border border-white/30 shadow-sm transition-transform active:scale-95" onclick="navigateTo('citizen-profile')" title="My Profile">
+            RS
+          </button>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="p-4 space-y-4">
+<!-- Greeting Banner -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-blue-900/50 transition-colors" onclick="navigateTo('citizen-profile')">
+<div>
+<p class="text-xs text-slate-500 font-medium">Namaste,</p>
+<h2 class="text-lg font-bold text-blue-950 leading-tight">Rameshwar Prasad Sharma</h2>
+<p class="text-[11px] text-slate-500">Citizen ID: <span class="font-mono text-slate-700">BHU-MH-89210-C</span></p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 font-medium text-xs px-2.5 py-1 rounded-full border border-emerald-200">
+<span class="material-symbols-outlined text-sm text-emerald-700">verified</span>
+              e-KYC Verified
+            </span>
+<p class="text-[10px] text-slate-400 mt-1">Haveli Taluk, Pune</p>
+</div>
+</div>
+<!-- TWO MASSIVE PRIMARY ACTION CARDS -->
+<div class="space-y-3">
+<!-- Card 1: Manage Registered Properties -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-5 hover:border-blue-900 cursor-pointer transition-all active:scale-[0.99] group" onclick="navigateTo('citizen-properties')">
+<div class="flex items-start justify-between mb-2">
+<div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-900 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">home_work</span>
+</div>
+<span class="bg-blue-100 text-blue-900 text-xs font-bold px-2.5 py-1 rounded-full border border-blue-200">
+                3 Active Parcels
+              </span>
+</div>
+<h3 class="text-base font-bold text-blue-950 group-hover:text-blue-900 transition-colors">
+              Manage Registered Properties
+            </h3>
+<p class="text-xs text-slate-500 mt-1 leading-relaxed">
+              Access your digital e-Pattadar Passbook, RoR (7/12 extract), cadastral maps, and mutation histories.
+            </p>
+<div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-blue-900">
+<span class="">View Land Parcel Ledger</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Card 2: Register New Property / Mutation -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-5 hover:border-orange-600 cursor-pointer transition-all active:scale-[0.99] group" onclick="navigateTo('citizen-register-step1')">
+<div class="flex items-start justify-between mb-2">
+<div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl">document_scanner</span>
+</div>
+<span class="bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-1 rounded-full border border-orange-200">
+                Direct Filing
+              </span>
+</div>
+<h3 class="text-base font-bold text-blue-950 group-hover:text-orange-700 transition-colors">
+              Register New Property / Mutation
+            </h3>
+<p class="text-xs text-slate-500 mt-1 leading-relaxed">
+              Initiate ownership transfer, deed intake, or succession claim with AI-powered Optical Character Recognition (OCR).
+            </p>
+<div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-orange-600">
+<span class="">Start Registration Intake</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Quick Service Shortcuts Card -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4">
+<p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">GovTech Citizen Utilities</p>
+<div class="grid grid-cols-3 gap-2">
+<button class="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 flex flex-col items-center text-center" onclick="showToast('RoR Search', 'Central Mahabhulekh search ready')">
+<span class="material-symbols-outlined text-blue-900 text-xl mb-1">search_check</span>
+<span class="text-[11px] font-bold text-slate-800">RoR Search</span>
+<span class="text-[9px] text-slate-400">Search by Sy. No.</span>
+</button>
+<button class="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 flex flex-col items-center text-center" onclick="showToast('Fee Calculator', 'Ready Reckoner rate loaded')">
+<span class="material-symbols-outlined text-orange-600 text-xl mb-1">calculate</span>
+<span class="text-[11px] font-bold text-slate-800">Fee Calculator</span>
+<span class="text-[9px] text-slate-400">Stamp Duty &amp; Cess</span>
+</button>
+<button class="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 flex flex-col items-center text-center" onclick="showToast('Grievance', 'CPGRAMS portal integrated')">
+<span class="material-symbols-outlined text-emerald-700 text-xl mb-1">support_agent</span>
+<span class="text-[11px] font-bold text-slate-800">Grievance</span>
+<span class="text-[9px] text-slate-400">Revenue Helpdesk</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Fixed Bottom Nav -->
+<nav class="fixed bottom-0 max-w-md w-full bg-white border-t border-stone-200 px-6 py-2.5 flex items-center justify-between shrink-0 shadow-lg z-30">
+<button class="flex flex-col items-center text-orange-600">
+<span class="material-symbols-outlined fill-1 text-2xl">home</span>
+<span class="text-[10px] font-bold mt-0.5">Home</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="navigateTo('citizen-properties')">
+<span class="material-symbols-outlined text-2xl">inventory_2</span>
+<span class="text-[10px] font-medium mt-0.5">Properties</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="navigateTo('citizen-register-step1')">
+<span class="material-symbols-outlined text-2xl">add_circle</span>
+<span class="text-[10px] font-medium mt-0.5">Services</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="navigateTo('citizen-profile')">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+<span class="text-[10px] font-medium mt-0.5">Profile</span>
+</button>
+</nav>
+</section>
+<!-- ======================================================== -->
+<!-- SCREEN 3: Registered Properties List -->
+<!-- ======================================================== -->
+<section class="hidden h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade" id="citizen-properties">
+<!-- Header -->
+<header class="bg-blue-900 text-white px-4 py-3 flex items-center gap-3 shadow-md shrink-0 sticky top-0 z-30">
+<button class="p-1 rounded-lg hover:bg-white/10 text-white" onclick="navigateTo('citizen-home')">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex-1">
+<h1 class="font-bold text-base leading-tight">My Properties</h1>
+<p class="text-[11px] text-blue-200">Registered Land Assets • Pune Division</p>
+</div>
+<button class="w-7 h-7 rounded-full bg-orange-600 text-white font-bold flex items-center justify-center text-xs border border-white/30" onclick="navigateTo('citizen-profile')">
+RS
+</button>
+</header>
+<!-- Filter Bar -->
+<div class="p-4 pb-2 flex items-center justify-between">
+<span class="px-3 py-1 rounded-full bg-blue-100 text-blue-900 border border-blue-200 text-xs font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-sm">location_city</span>
+          All Taluks (3)
+        </span>
+<button class="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5" onclick="navigateTo('citizen-register-step1')">
+<span class="material-symbols-outlined text-sm">add</span> Add Parcel
+        </button>
+</div>
+<!-- Properties List -->
+<div class="p-4 pt-1 space-y-3">
+<!-- Property 1 -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 md:p-5 hover:border-blue-900 cursor-pointer transition-all active:scale-[0.99] group" onclick="navigateTo('citizen-property-detail')">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">ULPIN</span>
+<p class="font-mono text-xs font-bold text-blue-950 flex items-center gap-1">
+<span class="">IN-MH-401102-8819</span>
+<span class="material-symbols-outlined text-xs text-slate-400">content_copy</span>
+</p>
+</div>
+<span class="text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Clear Title
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-3 py-2 px-3 bg-stone-50 rounded-xl text-xs">
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Survey Number</p>
+<p class="font-bold text-slate-800 font-mono">142/3-B</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Village &amp; Taluk</p>
+<p class="font-semibold text-slate-800">Khed Shivapur, Pune</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Extent / Area</p>
+<p class="font-semibold text-slate-800">2.40 Hectares (Agri)</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">RoR Status</p>
+<p class="font-bold text-emerald-700">Digital 7/12 Synced</p>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-blue-900">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-emerald-600">map</span> Cadastral Geometry Mapped
+            </span>
+<span class="flex items-center group-hover:translate-x-1 transition-transform">
+              View Details <span class="material-symbols-outlined text-sm ml-0.5">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Property 2 -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 md:p-5 hover:border-blue-900 cursor-pointer transition-all active:scale-[0.99] group" onclick="navigateTo('citizen-property-detail')">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">ULPIN</span>
+<p class="font-mono text-xs font-bold text-blue-950 flex items-center gap-1">
+<span class="">IN-MH-401102-4102</span>
+<span class="material-symbols-outlined text-xs text-slate-400">content_copy</span>
+</p>
+</div>
+<span class="text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Clear Title
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-3 py-2 px-3 bg-stone-50 rounded-xl text-xs">
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Survey Number</p>
+<p class="font-bold text-slate-800 font-mono">89/1-A</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Village &amp; Taluk</p>
+<p class="font-semibold text-slate-800">Wadgaon, Haveli</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Extent / Area</p>
+<p class="font-semibold text-slate-800">0.85 Hectares (Commercial)</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">RoR Status</p>
+<p class="font-bold text-emerald-700">Digital 7/12 Synced</p>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-blue-900">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-emerald-600">map</span> Non-Agricultural Sanctioned
+            </span>
+<span class="flex items-center group-hover:translate-x-1 transition-transform">
+              View Details <span class="material-symbols-outlined text-sm ml-0.5">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Property 3 -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 md:p-5 hover:border-amber-500 cursor-pointer transition-all active:scale-[0.99] group" onclick="navigateTo('citizen-property-detail')">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">ULPIN</span>
+<p class="font-mono text-xs font-bold text-blue-950 flex items-center gap-1">
+<span class="">IN-MH-401102-9931</span>
+<span class="material-symbols-outlined text-xs text-slate-400">content_copy</span>
+</p>
+</div>
+<span class="bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span> Mutation Pending
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-3 py-2 px-3 bg-stone-50 rounded-xl text-xs">
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Survey Number</p>
+<p class="font-bold text-slate-800 font-mono">54/2</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Village &amp; Taluk</p>
+<p class="font-semibold text-slate-800">Saswad, Purandar</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">Extent / Area</p>
+<p class="font-semibold text-slate-800">1.20 Hectares (Agri)</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-500 font-medium">RoR Status</p>
+<p class="font-bold text-amber-700">Notice Period (15 Days)</p>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-amber-700">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-amber-600">pending</span> Tahsildar Notice Active
+            </span>
+<span class="flex items-center group-hover:translate-x-1 transition-transform">
+              Track Status <span class="material-symbols-outlined text-sm ml-0.5">chevron_right</span>
+</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- SCREEN 4: Property Detail & GIS View -->
+<!-- ======================================================== -->
+<section class="hidden h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade relative" id="citizen-property-detail">
+<!-- Header -->
+<header class="bg-blue-900 text-white px-4 py-3 flex items-center gap-3 shadow-md shrink-0 sticky top-0 z-30">
+<button class="p-1 rounded-lg hover:bg-white/10 text-white" onclick="navigateTo('citizen-properties')">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex-1">
+<h1 class="font-bold text-base leading-tight">Property Details</h1>
+<p class="text-[11px] text-blue-200 font-mono">ULPIN: IN-MH-401102-8819</p>
+</div>
+<button class="w-7 h-7 rounded-full bg-orange-600 text-white font-bold flex items-center justify-center text-xs border border-white/30" onclick="navigateTo('citizen-profile')">
+RS
+</button>
+</header>
+<!-- Content Container -->
+<div class="p-4 space-y-3.5 pb-24">
+<!-- Top Half: Interactive-Style GIS Map Container -->
+<div class="bg-blue-100 border border-blue-200 rounded-2xl relative overflow-hidden h-52 gis-grid shadow-sm">
+<!-- Mock Map Graphic / Geodetic Vector -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 380 200">
+<!-- Neighboring Plots -->
+<polygon fill="#e2e8f0" points="15,20 130,10 145,85 10,95" stroke="#93c5fd" stroke-dasharray="3,3" stroke-width="1.5"></polygon>
+<polygon fill="#dbeafe" points="130,10 270,25 250,100 145,85" stroke="#93c5fd" stroke-width="1.5"></polygon>
+<polygon fill="#e2e8f0" points="270,25 365,15 360,115 250,100" stroke="#93c5fd" stroke-dasharray="3,3" stroke-width="1.5"></polygon>
+<!-- Active Survey 142/3-B Parcel -->
+<polygon fill="rgba(37, 99, 235, 0.22)" points="145,85 250,100 230,185 130,175" stroke="#1d4ed8" stroke-width="3"></polygon>
+<!-- Survey Pillars / Coordinates -->
+<circle cx="145" cy="85" fill="#ea580c" r="4" stroke="#ffffff" stroke-width="1.5"></circle>
+<circle cx="250" cy="100" fill="#ea580c" r="4" stroke="#ffffff" stroke-width="1.5"></circle>
+<circle cx="230" cy="185" fill="#ea580c" r="4" stroke="#ffffff" stroke-width="1.5"></circle>
+<circle cx="130" cy="175" fill="#ea580c" r="4" stroke="#ffffff" stroke-width="1.5"></circle>
+<text fill="#1e3a8a" font-family="sans-serif" font-size="11" font-weight="700" x="160" y="135">Sy. 142/3-B</text>
+<text fill="#2563eb" font-size="9" font-weight="600" x="160" y="150">2.40 Hectares</text>
+</svg>
+<!-- Survey 142/3-B Badge Top-Left -->
+<div class="absolute top-2.5 left-2.5 bg-blue-900/90 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow">
+            Survey 142/3-B • Khed Shivapur
+          </div>
+<!-- Zoom Controls Top-Right -->
+<div class="absolute top-2.5 right-2.5 flex flex-col space-y-1">
+<button class="w-7 h-7 bg-white text-slate-800 rounded-md shadow flex items-center justify-center border border-stone-200 font-bold hover:bg-stone-50" onclick="showToast('Zoom', 'Cadastral level magnified')">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+<button class="w-7 h-7 bg-white text-slate-800 rounded-md shadow flex items-center justify-center border border-stone-200 font-bold hover:bg-stone-50" onclick="showToast('Zoom', 'Demarcation grid restored')">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+</div>
+<!-- CORS RTK Verified Badge Bottom -->
+<div class="absolute bottom-2 left-2.5 right-2.5 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-200 text-[11px] text-blue-950 flex items-center justify-between font-medium">
+<span class="flex items-center gap-1 text-emerald-700 font-semibold">
+<span class="material-symbols-outlined text-xs">satellite_alt</span> CORS RTK Verified ±2cm
+            </span>
+<span class="text-slate-400 text-[10px] font-mono">EPSG:32643</span>
+</div>
+</div>
+<!-- Bottom Half: Expandable Cards -->
+<div class="space-y-3">
+<!-- Card 1: Record of Rights (7/12 Extract - RoR) -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4">
+<div class="flex items-center justify-between border-b border-stone-100 pb-2.5">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-blue-900 text-xl">description</span>
+<h3 class="font-bold text-xs text-blue-950 uppercase tracking-wide">Record of Rights (7/12 Extract - RoR)</h3>
+</div>
+<span class="text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded border border-emerald-200">VERIFIED</span>
+</div>
+<div class="mt-3 space-y-2 text-xs text-slate-700">
+<div class="flex justify-between py-1 border-b border-stone-100">
+<span class="text-slate-500">Title Owner:</span>
+<span class="font-bold text-slate-900">Rameshwar Prasad Sharma</span>
+</div>
+<div class="flex justify-between py-1 border-b border-stone-100">
+<span class="text-slate-500">Cultivator Status:</span>
+<span class="font-medium text-slate-900">Self (Khudkasht)</span>
+</div>
+<div class="flex justify-between py-1 border-b border-stone-100">
+<span class="text-slate-500">Undivided Share:</span>
+<span class="font-bold text-emerald-700">100% Sole Ownership</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-slate-500">Khata (Ledger) No:</span>
+<span class="font-mono font-bold text-slate-800">MH-KH-2023-9941</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Encumbrance Certificate (EC) -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4">
+<div class="flex items-center justify-between border-b border-stone-100 pb-2.5">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-emerald-600 text-xl">verified_user</span>
+<h3 class="font-bold text-xs text-blue-950 uppercase tracking-wide">Encumbrance Certificate (EC)</h3>
+</div>
+<span class="material-symbols-outlined text-emerald-600 text-base">check_circle</span>
+</div>
+<div class="mt-3 space-y-2 text-xs">
+<div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between text-emerald-900 font-semibold">
+<span class="">Nil Encumbrance (2010–2024)</span>
+<span class="text-[10px] text-emerald-700">14-Year Search</span>
+</div>
+<p class="text-[11px] text-slate-500 leading-normal">
+                No registered mortgage, court lien, or government attachment detected across Sub-Registrar Haveli archives.
+              </p>
+</div>
+</div>
+<!-- Card 3: Land Revenue & Tax Dues -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4">
+<div class="flex items-center justify-between border-b border-stone-100 pb-2.5">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-orange-600 text-xl">payments</span>
+<h3 class="font-bold text-xs text-blue-950 uppercase tracking-wide">Land Revenue &amp; Tax Dues</h3>
+</div>
+<span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">CLEARED</span>
+</div>
+<div class="mt-3 text-xs space-y-1.5">
+<div class="flex justify-between items-center">
+<span class="text-slate-600 font-medium">All dues cleared for FY 2024-25:</span>
+<span class="font-mono font-bold text-emerald-700 text-sm">₹0 Due</span>
+</div>
+<p class="text-[10px] text-slate-400">e-Receipt #REV-2024-5519 generated on 12-Apr-2024</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Fixed Bottom CTA Button / FAB -->
+<div class="fixed bottom-4 max-w-md w-full px-4 z-30">
+<button class="bg-orange-600 hover:bg-orange-700 text-white shadow-lg py-3.5 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 w-full active:scale-[0.99] transition-all" onclick="showToast('e-Passbook Download', 'Digitally signed e-Pattadar Passbook downloaded with QR')">
+<span class="material-symbols-outlined text-xl">download</span>
+<span class="">Download e-Pattadar Passbook</span>
+</button>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- SCREEN 5: Register / Mutation Workflow -->
+<!-- ======================================================== -->
+<section class="hidden h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade relative" id="citizen-register-step1">
+<!-- Header -->
+<header class="bg-blue-900 text-white px-4 py-3 flex items-center gap-3 shadow-md shrink-0 sticky top-0 z-30">
+<button class="p-1 rounded-lg hover:bg-white/10 text-white" onclick="navigateTo('citizen-home')">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex-1">
+<h1 class="font-bold text-base leading-tight">New Registration</h1>
+<p class="text-[11px] text-blue-200">Deed Mutation &amp; Title Ingestion</p>
+</div>
+<button class="w-7 h-7 rounded-full bg-orange-600 text-white font-bold flex items-center justify-center text-xs border border-white/30" onclick="navigateTo('citizen-profile')">
+RS
+</button>
+</header>
+<!-- Scrollable Form Container -->
+<div class="p-4 space-y-4 pb-28">
+<!-- Step Indicator -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-3 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-6 h-6 rounded-full bg-orange-600 text-white font-bold text-xs flex items-center justify-center">1</span>
+<span class="text-xs font-bold text-blue-950">Step 1 of 3: Deed &amp; Ownership Intake</span>
+</div>
+<span class="text-[10px] font-mono font-semibold text-slate-400">33%</span>
+</div>
+<!-- Prominent OCR Button -->
+<div class="border-2 border-dashed border-blue-300 bg-blue-50/80 hover:bg-blue-100 text-blue-900 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition active:scale-[0.99]" onclick="triggerSimulatedOCR()">
+<div class="w-12 h-12 rounded-full bg-blue-900 text-white flex items-center justify-center mb-2 shadow">
+<span class="material-symbols-outlined text-2xl">document_scanner</span>
+</div>
+<h4 class="font-bold text-sm text-blue-950">Scan Document (OCR)</h4>
+<p class="text-xs text-blue-800/80 mt-1 max-w-xs">
+            Upload sale deed or patta copy to auto-extract parcel data
+          </p>
+<span class="mt-3 px-3 py-1 rounded-full bg-white text-blue-900 text-[11px] font-semibold border border-blue-200 shadow-sm flex items-center gap-1" id="ocr-status-pill">
+<span class="material-symbols-outlined text-xs text-orange-600">bolt</span> Tap to run AI Document Parser
+          </span>
+</div>
+<!-- Auto-filled Form Fields -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 md:p-5 space-y-3.5">
+<div class="flex items-center justify-between border-b border-stone-100 pb-2">
+<h3 class="font-bold text-xs text-blue-950 uppercase tracking-wide flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-orange-600">app_registration</span>
+              Intake Particulars
+            </h3>
+<span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              Auto-filled via OCR
+            </span>
+</div>
+<!-- Field 1: Old Patta / Khata Number -->
+<div>
+<label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Old Patta / Khata Number</label>
+<div class="relative">
+<input class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-900" type="text" value="MH-KH-2023-9941"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-emerald-600 text-base">verified</span>
+</div>
+</div>
+<!-- Field 2: Buyer Name -->
+<div>
+<label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Buyer Name (Transferee)</label>
+<div class="relative">
+<input class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-900" type="text" value="Rameshwar Prasad Sharma"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-emerald-600 text-base">verified</span>
+</div>
+</div>
+<!-- Field 3: Seller Name -->
+<div>
+<label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Seller Name (Transferor)</label>
+<div class="relative">
+<input class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-900" type="text" value="Suresh Narayan Patil"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-emerald-600 text-base">verified</span>
+</div>
+</div>
+<!-- Field 4: Proposed Land Usage -->
+<div>
+<label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Proposed Land Usage</label>
+<input class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-900" type="text" value="Agricultural (Class A)"/>
+</div>
+</div>
+</div>
+<!-- Fixed Bottom CTA Button -->
+<div class="fixed bottom-4 max-w-md w-full px-4 z-30">
+<button class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3.5 rounded-xl shadow-md w-full active:scale-[0.99] transition-all flex items-center justify-center space-x-2" onclick="submitCitizenFiling()">
+<span class="">Submit to Department</span>
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- SCREEN 6: Admin / Official Dashboard -->
+<!-- ======================================================== -->
+<section class="hidden h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade" id="admin-home">
+<!-- Header -->
+<header class="bg-blue-950 text-white px-4 py-3 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-30">
+<div class="flex items-center space-x-2">
+<div class="w-7 h-7 rounded-lg bg-orange-500/20 border border-orange-400/40 flex items-center justify-center text-orange-400">
+<span class="material-symbols-outlined text-lg">account_balance</span>
+</div>
+<div>
+<h1 class="font-bold text-sm leading-tight">BhuSabha Admin</h1>
+<p class="text-[10px] text-blue-200">Tahsildar Portal • Pune Rural</p>
+</div>
+</div>
+<div class="flex items-center space-x-2">
+<!-- Online / Offline Sync Toggle Switch -->
+<div class="flex items-center space-x-2 bg-white/10 px-2.5 py-1 rounded-full border border-white/10">
+<span class="text-[10px] font-bold text-emerald-300" id="official-sync-text">Online</span>
+<button class="w-7 h-4 bg-emerald-500 rounded-full relative transition-colors focus:outline-none" id="official-toggle-switch" onclick="toggleOfficialSync()">
+<span class="w-3 h-3 bg-white rounded-full absolute top-0.5 right-0.5 transition-transform" id="official-toggle-dot"></span>
+</button>
+</div>
+<!-- Admin Quick Logout -->
+<button class="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs flex items-center" onclick="logoutUser()" title="Logout Admin">
+<span class="material-symbols-outlined text-lg">logout</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Admin Feed -->
+<div class="p-4 space-y-4">
+<!-- Interoperability Matrix -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Interoperability Matrix</p>
+<span class="text-[10px] text-emerald-700 font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span> 4 Services Connected
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<!-- 1. Land Records (DILRMP) -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-3 flex items-center space-x-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+<div>
+<p class="text-xs font-bold text-slate-800 leading-tight">Land Records (DILRMP)</p>
+<p class="text-[10px] text-emerald-700 font-medium">Green dot active</p>
+</div>
+</div>
+<!-- 2. Registration (NGDRS) -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-3 flex items-center space-x-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+<div>
+<p class="text-xs font-bold text-slate-800 leading-tight">Registration (NGDRS)</p>
+<p class="text-[10px] text-emerald-700 font-medium">Green dot active</p>
+</div>
+</div>
+<!-- 3. Town Planning -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-3 flex items-center space-x-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+<div>
+<p class="text-xs font-bold text-slate-800 leading-tight">Town Planning</p>
+<p class="text-[10px] text-emerald-700 font-medium">Green dot active</p>
+</div>
+</div>
+<!-- 4. Fiscal / Treasury -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-3 flex items-center space-x-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+<div>
+<p class="text-xs font-bold text-slate-800 leading-tight">Fiscal / Treasury</p>
+<p class="text-[10px] text-emerald-700 font-medium">Green dot active</p>
+</div>
+</div>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-2 gap-3">
+<!-- KPI 1 -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4">
+<div class="flex items-center justify-between text-slate-500">
+<span class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Pending Registrations</span>
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">14</span>
+</div>
+<p class="text-3xl font-extrabold text-blue-950 mt-1.5">14</p>
+<p class="text-[10px] text-amber-700 font-medium mt-0.5">3 require urgent field inspection</p>
+</div>
+<!-- KPI 2 -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4">
+<div class="flex items-center justify-between text-slate-500">
+<span class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Anomalies Detected</span>
+<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">2</span>
+</div>
+<p class="text-3xl font-extrabold text-rose-600 mt-1.5">2</p>
+<p class="text-[10px] text-rose-700 font-medium mt-0.5">Overlap in boundary polygon</p>
+</div>
+</div>
+<!-- Task Queue -->
+<div class="space-y-2.5">
+<div class="flex items-center justify-between">
+<p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Citizen Submissions Queue</p>
+<span class="text-[10px] text-blue-900 font-bold">Sort: Priority</span>
+</div>
+<!-- Task 1 (Navigates to admin-task-review) -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 hover:border-blue-900 cursor-pointer transition-all active:scale-[0.99] group" onclick="navigateTo('admin-task-review')">
+<div class="flex items-center justify-between">
+<span class="bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                Pending Verification
+              </span>
+<span class="text-[10px] font-mono text-slate-400">10 mins ago</span>
+</div>
+<div class="mt-2">
+<h4 class="font-bold text-xs text-blue-950 group-hover:text-blue-900">
+                Mutation Application #MUT-2024-8841
+              </h4>
+<p class="text-xs text-slate-600 mt-0.5 font-medium">Applicant: Rameshwar Prasad Sharma • Survey 142/3-B</p>
+</div>
+<div class="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-blue-900">
+<span class="text-emerald-700 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">verified</span> OCR Data Matched
+              </span>
+<span class="flex items-center group-hover:translate-x-1 transition-transform">
+                Review Case <span class="material-symbols-outlined text-xs ml-0.5">chevron_right</span>
+</span>
+</div>
+</div>
+<!-- Task 2 -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 hover:border-blue-900 cursor-pointer transition-all active:scale-[0.99] group" onclick="navigateTo('admin-task-review')">
+<div class="flex items-center justify-between">
+<span class="bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                Pending Verification
+              </span>
+<span class="text-[10px] font-mono text-slate-400">45 mins ago</span>
+</div>
+<div class="mt-2">
+<h4 class="font-bold text-xs text-blue-950 group-hover:text-blue-900">
+                Boundary Demarcation #BD-2024-1102
+              </h4>
+<p class="text-xs text-slate-600 mt-0.5 font-medium">Applicant: Anita Desai • Survey 90/4</p>
+</div>
+<div class="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between text-xs font-semibold text-blue-900">
+<span class="text-slate-500">Field Surveyor Assigned</span>
+<span class="flex items-center group-hover:translate-x-1 transition-transform">
+                Review Case <span class="material-symbols-outlined text-xs ml-0.5">chevron_right</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Nav (Admin) -->
+<nav class="fixed bottom-0 max-w-md w-full bg-white border-t border-stone-200 px-6 py-2.5 flex items-center justify-between shrink-0 shadow-lg z-30">
+<button class="flex flex-col items-center text-blue-900">
+<span class="material-symbols-outlined fill-1 text-2xl">dashboard</span>
+<span class="text-[10px] font-bold mt-0.5">Dashboard</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700 relative" onclick="showToast('Queue', '14 submissions waiting')">
+<span class="material-symbols-outlined text-2xl">fact_check</span>
+<span class="absolute -top-1 -right-2 w-4 h-4 bg-orange-600 text-white rounded-full text-[9px] font-bold flex items-center justify-center">14</span>
+<span class="text-[10px] font-medium mt-0.5">Queue</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="navigateTo('citizen-property-detail')">
+<span class="material-symbols-outlined text-2xl">map</span>
+<span class="text-[10px] font-medium mt-0.5">GIS</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="logoutUser()">
+<span class="material-symbols-outlined text-2xl">logout</span>
+<span class="text-[10px] font-medium mt-0.5">Logout</span>
+</button>
+</nav>
+</section>
+<!-- ======================================================== -->
+<!-- SCREEN 7: Admin Task Review -->
+<!-- ======================================================== -->
+<section class="hidden h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade relative" id="admin-task-review">
+<!-- Header -->
+<header class="bg-blue-950 text-white px-4 py-3 flex items-center gap-3 shadow-md shrink-0 sticky top-0 z-30">
+<button class="p-1 rounded-lg hover:bg-white/10 text-white" onclick="navigateTo('admin-home')">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div>
+<h1 class="font-bold text-base leading-tight">Review Request</h1>
+<p class="text-[11px] text-blue-200">Application #MUT-2024-8841 • Sub-District Haveli</p>
+</div>
+</header>
+<!-- Scrollable Comparison View -->
+<div class="p-4 space-y-3.5 pb-24">
+<!-- Status Banner -->
+<div class="bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center justify-between text-xs text-blue-900">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-blue-900 text-lg">fact_check</span>
+<span class="font-semibold">Automated Concordance Check: 100% Pass</span>
+</div>
+<span class="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
+            CLEARED
+          </span>
+</div>
+<!-- Left/Top Card: Citizen Submitted OCR Data -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 md:p-5 space-y-2.5">
+<div class="flex items-center justify-between border-b border-stone-100 pb-2">
+<h3 class="font-bold text-xs text-blue-950 uppercase tracking-wide flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-orange-600">document_scanner</span>
+              Citizen Submitted OCR Data (Sale Deed)
+            </h3>
+<span class="text-[10px] font-mono text-slate-400">Doc ID: SD-9912</span>
+</div>
+<div class="space-y-1.5 text-xs">
+<div class="flex justify-between py-1 border-b border-stone-50">
+<span class="text-slate-500">Khata (Ledger) No:</span>
+<span class="font-mono font-bold text-slate-800 flex items-center gap-1">
+                MH-KH-2023-9941 <span class="material-symbols-outlined text-emerald-600 text-xs">check_circle</span>
+</span>
+</div>
+<div class="flex justify-between py-1 border-b border-stone-50">
+<span class="text-slate-500">Acreage / Extent:</span>
+<span class="font-bold text-slate-800 flex items-center gap-1">
+                2.40 Hectares (Agri) <span class="material-symbols-outlined text-emerald-600 text-xs">check_circle</span>
+</span>
+</div>
+<div class="flex justify-between py-1 border-b border-stone-50">
+<span class="text-slate-500">Buyer (Transferee):</span>
+<span class="font-semibold text-slate-900">Rameshwar Prasad Sharma</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-slate-500">Seller (Transferor):</span>
+<span class="font-semibold text-slate-900">Suresh Narayan Patil</span>
+</div>
+</div>
+</div>
+<!-- Right/Bottom Card: Legacy Database Record -->
+<div class="bg-white shadow-sm border border-stone-200/80 rounded-2xl p-4 md:p-5 space-y-2.5">
+<div class="flex items-center justify-between border-b border-stone-100 pb-2">
+<h3 class="font-bold text-xs text-blue-950 uppercase tracking-wide flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-blue-900">database</span>
+              Legacy Database Record (Mahabhulekh / RoR)
+            </h3>
+<span class="text-[10px] font-mono text-slate-400">Master Record</span>
+</div>
+<div class="space-y-1.5 text-xs">
+<div class="flex justify-between py-1 border-b border-stone-50">
+<span class="text-slate-500">Master Khata No:</span>
+<span class="font-mono font-bold text-slate-800 flex items-center gap-1">
+                MH-KH-2023-9941 <span class="material-symbols-outlined text-emerald-600 text-xs">check_circle</span>
+</span>
+</div>
+<div class="flex justify-between py-1 border-b border-stone-50">
+<span class="text-slate-500">Recorded Extent:</span>
+<span class="font-bold text-slate-800 flex items-center gap-1">
+                2.40 Hectares <span class="material-symbols-outlined text-emerald-600 text-xs">check_circle</span>
+</span>
+</div>
+<div class="flex justify-between py-1 border-b border-stone-50">
+<span class="text-slate-500">Tax Dues Clearance:</span>
+<span class="text-emerald-700 font-bold flex items-center gap-1">
+                Verified (₹0 Due) <span class="material-symbols-outlined text-emerald-600 text-xs">check_circle</span>
+</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-slate-500">Dispute Flag:</span>
+<span class="font-bold text-emerald-700">Nil Active Litigations</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fixed Bottom Actions: Reject & Approve Buttons -->
+<div class="fixed bottom-0 max-w-md w-full bg-white/95 backdrop-blur-md p-4 border-t border-stone-200 shadow-xl flex items-center gap-3 z-30">
+<button class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl flex-1 text-xs active:scale-[0.98] transition-all flex items-center justify-center gap-1 shadow" onclick="handleRejectReview()">
+<span class="material-symbols-outlined text-base">close</span>
+<span class="">Reject (Resubmit)</span>
+</button>
+<button class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl flex-1 text-xs active:scale-[0.98] transition-all flex items-center justify-center gap-1 shadow" onclick="handleApproveReview()">
+<span class="material-symbols-outlined text-base">done_all</span>
+<span class="">Approve (Push to Ledger)</span>
+</button>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- SCREEN 8: Citizen Profile & Account Screen -->
+<!-- ======================================================== -->
+<section class="hidden h-[100dvh] w-full flex-col overflow-y-auto pb-20 bg-stone-50 screen-fade relative" id="citizen-profile">
+<!-- Header -->
+<header class="bg-blue-900 text-white px-4 py-3 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-30">
+<div class="flex items-center gap-3">
+<button class="p-1 rounded-lg hover:bg-white/10 text-white" onclick="navigateTo('citizen-home')">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div>
+<h1 class="font-bold text-base leading-tight">Citizen Profile</h1>
+<p class="text-[11px] text-blue-200">Account &amp; Digital Cadastre Identity</p>
+</div>
+</div>
+<button class="p-1 text-blue-200 hover:text-white" onclick="showToast('Syncing', 'Refreshing Aadhaar e-KYC status...')" title="Sync Account">
+<span class="material-symbols-outlined text-xl">sync</span>
+</button>
+</header>
+<!-- Profile Body Content -->
+<div class="p-4 space-y-4 pb-28">
+<!-- User Profile Card -->
+<div class="bg-white rounded-2xl shadow-sm p-5 border border-stone-200/80 flex flex-col items-center text-center relative overflow-hidden">
+<div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-900 to-orange-600 p-0.5 shadow-md mb-3 flex items-center justify-center">
+<div class="w-full h-full rounded-full bg-blue-950 flex items-center justify-center text-white font-extrabold text-2xl tracking-wider border-2 border-white">
+            RS
+          </div>
+</div>
+<h2 class="text-base font-bold text-blue-950">Rameshwar Prasad Sharma</h2>
+<p class="text-xs font-mono text-slate-500 mt-0.5">Citizen ID: BHU-MH-89210-C</p>
+<div class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold shadow-xs">
+<span class="material-symbols-outlined text-sm text-emerald-700">verified</span>
+<span>✓ Aadhaar e-KYC Verified</span>
+</div>
+</div>
+<!-- Key Profile Details List -->
+<div class="bg-white rounded-2xl shadow-sm border border-stone-200/80 overflow-hidden divide-y divide-stone-100">
+<div class="p-3.5 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-900 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-lg">phone_android</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Mobile Number</p>
+<p class="text-xs font-semibold text-slate-800 mt-0.5">+91 98234 ••••• <span class="text-[10px] text-emerald-700 font-medium">(Linked to Aadhaar)</span></p>
+</div>
+</div>
+<div class="p-3.5 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-900 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-lg">mail</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Email Address</p>
+<p class="text-xs font-semibold text-slate-800 mt-0.5 font-mono">r.sharma.agri@govin.mock</p>
+</div>
+</div>
+<div class="p-3.5 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-900 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-lg">badge</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Linked Aadhaar</p>
+<p class="text-xs font-semibold text-slate-800 mt-0.5 font-mono">•••• •••• 4892 <span class="text-[10px] text-blue-700 font-medium">(Biometric Lock Active)</span></p>
+</div>
+</div>
+<div class="p-3.5 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-lg">landscape</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Registered Land Holdings</p>
+<p class="text-xs font-bold text-slate-800 mt-0.5">3 Parcels <span class="font-normal text-slate-500">(Pune Rural District)</span></p>
+</div>
+</div>
+<div class="p-3.5 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-stone-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-lg">pin_drop</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Primary Village / Tahsil</p>
+<p class="text-xs font-semibold text-slate-800 mt-0.5">Haveli / Wagholi, Maharashtra</p>
+</div>
+</div>
+<div class="p-3.5 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-900 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-lg">fingerprint</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">ULPIN Registered</p>
+<p class="text-xs font-mono font-bold text-blue-950 mt-0.5">IN-MH-401102-8819 <span class="font-sans text-[10px] text-slate-500 font-medium">(+2 more)</span></p>
+</div>
+</div>
+</div>
+<!-- Preferences & GovTech Utilities -->
+<div class="bg-white rounded-2xl shadow-sm border border-stone-200/80 p-4 space-y-3.5">
+<h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Preferences &amp; Security</h3>
+<!-- Offline Data Sync -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center space-x-2.5">
+<span class="material-symbols-outlined text-emerald-600 text-xl">cloud_sync</span>
+<div>
+<p class="text-xs font-bold text-slate-800">Offline Data Sync</p>
+<p class="text-[10px] text-emerald-700">Up to Date (2.4 MB cached)</p>
+</div>
+</div>
+<button class="w-8 h-4 bg-emerald-500 rounded-full relative transition-colors focus:outline-none" onclick="showToast('Cache Synced', 'Local ledger offline records updated.')">
+<span class="w-3 h-3 bg-white rounded-full absolute top-0.5 right-0.5"></span>
+</button>
+</div>
+<!-- Language Preference -->
+<div class="border-t border-stone-100 pt-3">
+<p class="text-xs font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-blue-900 text-base">translate</span>
+            Language Preference
+          </p>
+<div class="grid grid-cols-3 gap-2">
+<button class="py-1.5 px-2 rounded-xl text-xs font-bold bg-blue-900 text-white shadow-xs" onclick="showToast('Language', 'Switched to English')">English</button>
+<button class="py-1.5 px-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-slate-700 border border-stone-200" onclick="showToast('Language', 'मराठी भाषा निवडली')">मराठी</button>
+<button class="py-1.5 px-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-slate-700 border border-stone-200" onclick="showToast('Language', 'हिंदी भाषा चुनी गई')">हिंदी</button>
+</div>
+</div>
+<!-- Digital Passbook Security PIN -->
+<div class="border-t border-stone-100 pt-3 flex items-center justify-between">
+<div class="flex items-center space-x-2.5">
+<span class="material-symbols-outlined text-orange-600 text-xl">lock</span>
+<div>
+<p class="text-xs font-bold text-slate-800">Digital Passbook Security PIN</p>
+<p class="text-[10px] text-slate-500 font-mono">Configured (••••)</p>
+</div>
+</div>
+<button class="text-xs font-semibold text-blue-900 hover:underline" onclick="showToast('Security PIN', 'PIN re-authentication verified')">
+            Change
+          </button>
+</div>
+</div>
+<!-- Danger Zone / Logout Action -->
+<div class="pt-1">
+<button class="bg-red-50 hover:bg-red-100 active:bg-red-200 text-red-700 border border-red-200 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer w-full shadow-xs active:scale-[0.99]" onclick="logoutUser()">
+<span class="material-symbols-outlined text-xl">logout</span>
+<span class="text-xs tracking-wide">Logout from BhuSabha</span>
+</button>
+<p class="text-center text-[10px] text-slate-400 mt-2 font-medium">Session token active via National Informatics Centre (NIC)</p>
+</div>
+</div>
+<!-- Fixed Bottom Nav (Profile Screen Active) -->
+<nav class="fixed bottom-0 max-w-md w-full bg-white border-t border-stone-200 px-6 py-2.5 flex items-center justify-between shrink-0 shadow-lg z-30">
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="navigateTo('citizen-home')">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span class="text-[10px] font-medium mt-0.5">Home</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="navigateTo('citizen-properties')">
+<span class="material-symbols-outlined text-2xl">inventory_2</span>
+<span class="text-[10px] font-medium mt-0.5">Properties</span>
+</button>
+<button class="flex flex-col items-center text-slate-400 hover:text-slate-700" onclick="navigateTo('citizen-register-step1')">
+<span class="material-symbols-outlined text-2xl">add_circle</span>
+<span class="text-[10px] font-medium mt-0.5">Services</span>
+</button>
+<button class="flex flex-col items-center text-orange-600">
+<span class="material-symbols-outlined fill-1 text-2xl">account_circle</span>
+<span class="text-[10px] font-bold mt-0.5">Profile</span>
+</button>
+</nav>
+</section>
+</main>
+<!-- ======================================================== -->
+<!-- JAVASCRIPT: SPA NAVIGATION & INTERACTIONS -->
+<!-- ======================================================== -->
+<script>
+    // SPA Router
+    function navigateTo(screenId) {
+      const screens = [
+        'login-screen',
+        'citizen-home',
+        'citizen-properties',
+        'citizen-property-detail',
+        'citizen-register-step1',
+        'citizen-profile',
+        'admin-home',
+        'admin-task-review'
+      ];
+      screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.add('hidden');
+          el.classList.remove('flex');
+        }
+      });
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('flex');
+        target.scrollTop = 0;
+      }
+    }
+
+    // Toast helper
+    let toastTimer = null;
+    function showToast(title, message) {
+      const toast = document.getElementById('toast');
+      const tTitle = document.getElementById('toast-title');
+      const tMsg = document.getElementById('toast-message');
+      if (!toast) return;
+
+      tTitle.innerText = title;
+      tMsg.innerText = message;
+
+      toast.classList.remove('-translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-24', 'opacity-0');
+      }, 2500);
+    }
+
+    // Logout function
+    function logoutUser() {
+      showToast("Signed Out", "Logged out successfully");
+      setTimeout(() => {
+        navigateTo('login-screen');
+      }, 400);
+    }
+
+    // Trigger simulated OCR
+    function triggerSimulatedOCR() {
+      const pill = document.getElementById('ocr-status-pill');
+      pill.innerHTML = `<span class="material-symbols-outlined text-xs animate-spin text-orange-600">sync</span> Extracting metadata...`;
+      setTimeout(() => {
+        pill.innerHTML = `<span class="material-symbols-outlined text-xs text-emerald-600">check_circle</span> Deed Parsed (99.8% Match)`;
+        showToast('OCR Ingestion', 'Extracted Deed, Khata No. & Extent from sale deed');
+      }, 900);
+    }
+
+    // Submit citizen filing
+    function submitCitizenFiling() {
+      showToast('Intake Submitted', 'Application #MUT-2024-8841 sent to Tahsildar');
+      setTimeout(() => {
+        navigateTo('citizen-home');
+      }, 700);
+    }
+
+    // Official approval
+    function handleApproveReview() {
+      showToast('Approved', 'Mutation cleared. Pushed to immutable land ledger.');
+      setTimeout(() => {
+        navigateTo('admin-home');
+      }, 800);
+    }
+
+    // Official rejection
+    function handleRejectReview() {
+      showToast('Notice Issued', 'Returned for document re-verification.');
+      setTimeout(() => {
+        navigateTo('admin-home');
+      }, 800);
+    }
+
+    // Official Sync Mode Toggle
+    let isOfficialOnline = true;
+    function toggleOfficialSync() {
+      isOfficialOnline = !isOfficialOnline;
+      const text = document.getElementById('official-sync-text');
+      const switchEl = document.getElementById('official-toggle-switch');
+      const dotEl = document.getElementById('official-toggle-dot');
+
+      if (isOfficialOnline) {
+        text.innerText = 'Online';
+        text.className = 'text-[10px] font-bold text-emerald-300';
+        switchEl.className = 'w-7 h-4 bg-emerald-500 rounded-full relative transition-colors focus:outline-none';
+        dotEl.style.right = '2px';
+        dotEl.style.left = 'auto';
+        showToast('Network', 'Connected to National Registry');
+      } else {
+        text.innerText = 'Offline';
+        text.className = 'text-[10px] font-bold text-amber-300';
+        switchEl.className = 'w-7 h-4 bg-slate-600 rounded-full relative transition-colors focus:outline-none';
+        dotEl.style.left = '2px';
+        dotEl.style.right = 'auto';
+        showToast('Offline Mode', 'Storing reviews in local field cache');
+      }
+    }
+
+    // Clock simulation
+    function updateClock() {
+      const clock = document.getElementById('status-clock');
+      if (!clock) return;
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      clock.innerText = `${h}:${m}`;
+    }
+    setInterval(updateClock, 30000);
+    updateClock();
+  </script>
+</body></html>
