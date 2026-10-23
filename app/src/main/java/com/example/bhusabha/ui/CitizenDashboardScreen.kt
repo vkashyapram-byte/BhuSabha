@@ -22,7 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
@@ -63,88 +63,107 @@ import com.example.bhusabha.theme.GovSlate700
 import com.example.bhusabha.theme.GovSlate900
 import com.example.bhusabha.theme.GovSurface
 
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.Scaffold
+
 @Composable
 fun CitizenDashboardScreen(
     viewModel: BhuSabhaViewModel,
     onLogout: () -> Unit,
+    onNavigateProfile: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val citizenUser by viewModel.citizenUser.collectAsState()
     val parcels by viewModel.filteredParcels.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(GovBg)
-            .statusBarsPadding()
-    ) {
-        // Top App Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(GovSurface)
-                .border(width = 1.dp, color = GovCardBorder)
-                .padding(horizontal = 20.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape)
-                        .background(GovBlueLight),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Citizen Profile",
-                        tint = GovBlue,
-                        modifier = Modifier.size(22.dp)
-                    )
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        bottomBar = {
+            CitizenBottomNavigationBar(
+                currentTab = CitizenTab.HOME,
+                onTabSelected = { tab ->
+                    if (tab == CitizenTab.PROFILE) {
+                        onNavigateProfile()
+                    }
                 }
-
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(GovBg)
+                .padding(innerPadding)
+        ) {
+            // Top App Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(GovSurface)
+                    .border(width = 1.dp, color = GovCardBorder)
+                    .statusBarsPadding()
+                    .padding(horizontal = 20.dp, vertical = 14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = Modifier.clickable { onNavigateProfile() },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(CircleShape)
+                            .background(GovNavy),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = citizenUser?.name ?: "Citizen Portal",
-                            color = GovSlate900,
+                            text = citizenUser.initials,
+                            color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
-                        Icon(
-                            imageVector = Icons.Default.Verified,
-                            contentDescription = "e-KYC Verified",
-                            tint = GovBlue,
-                            modifier = Modifier.size(15.dp)
+                    }
+
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = citizenUser.name,
+                                color = GovSlate900,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Verified,
+                                contentDescription = "e-KYC Verified",
+                                tint = GovBlue,
+                                modifier = Modifier.size(15.dp)
+                            )
+                        }
+                        Text(
+                            text = "Aadhaar: ${citizenUser.aadhaarMasked} • ${citizenUser.village}",
+                            color = GovSlate500,
+                            fontSize = 11.sp
                         )
                     }
-                    Text(
-                        text = "Aadhaar: ${citizenUser?.aadhaarMasked ?: "XXXX-XXXX-4892"} • Pune",
-                        color = GovSlate500,
-                        fontSize = 11.sp
+                }
+
+                IconButton(onClick = {
+                    viewModel.logout()
+                    onLogout()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Sign Out",
+                        tint = GovSlate500
                     )
                 }
             }
-
-            IconButton(onClick = {
-                viewModel.logout()
-                onLogout()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Logout,
-                    contentDescription = "Sign Out",
-                    tint = GovSlate500
-                )
-            }
-        }
 
         LazyColumn(
             modifier = Modifier
@@ -312,6 +331,7 @@ fun CitizenDashboardScreen(
             }
         }
     }
+}
 }
 
 @Composable

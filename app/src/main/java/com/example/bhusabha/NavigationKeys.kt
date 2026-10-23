@@ -11,3 +11,6 @@ data object CitizenDashboardNavKey : NavKey
 
 @Serializable
 data object OfficialDashboardNavKey : NavKey
+
+@Serializable
+data object CitizenProfileNavKey : NavKey

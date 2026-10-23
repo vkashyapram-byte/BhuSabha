@@ -20,7 +20,7 @@ class BhuSabhaViewModel(
 ) : ViewModel() {
 
     val currentPersona: StateFlow<UserPersona> = repository.currentPersona
-    val citizenUser: StateFlow<CitizenUser?> = repository.citizenUser
+    val citizenUser: StateFlow<CitizenUser> = repository.citizenUser
     val officialUser: StateFlow<OfficialUser?> = repository.officialUser
     val isOfflineReady: StateFlow<Boolean> = repository.isOfflineReady
     val mutations: StateFlow<List<MutationApplication>> = repository.mutations
@@ -57,6 +57,11 @@ class BhuSabhaViewModel(
     // Active Login Sheet
     val activeLoginModal = MutableStateFlow<UserPersona?>(null)
 
+    // Profile Dialogs & Feedback
+    val showEditProfileDialog = MutableStateFlow(false)
+    val showChangePinDialog = MutableStateFlow(false)
+    val syncToastMessage = MutableStateFlow<String?>(null)
+
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
     }
@@ -76,13 +81,13 @@ class BhuSabhaViewModel(
     }
 
     fun submitCitizenLogin(onSuccess: () -> Unit) {
-        val aadhaar = citizenAadhaarInput.value.replace(" ", "")
+        val input = citizenAadhaarInput.value.replace(" ", "")
         val otp = citizenOtpInput.value
         if (otp.length != 6) {
             citizenLoginError.value = "Please enter valid 6-digit Aadhaar OTP"
             return
         }
-        val success = repository.authenticateCitizen(aadhaar, otp)
+        val success = repository.authenticateCitizen(input, otp)
         if (success) {
             activeLoginModal.value = null
             onSuccess()
@@ -106,6 +111,73 @@ class BhuSabhaViewModel(
         } else {
             officialLoginError.value = "Authorization failed for this circle."
         }
+    }
+
+    // Profile Management Functions
+    fun updateProfile(
+        name: String,
+        email: String,
+        mobile: String,
+        village: String,
+        taluka: String,
+        district: String = "",
+        state: String = ""
+    ) {
+        repository.updateCitizenProfile(name, email, mobile, village, taluka, district, state)
+        showEditProfileDialog.value = false
+        syncToastMessage.value = "Profile updated: $name"
+    }
+
+    fun addDemoParcel(surveyNum: String = "112/3", village: String = "", area: Double = 1.75) {
+        val count = (repository.parcels.value.size) + 1
+        val newUlpin = "IN-MH-401102-${7200 + count}"
+        val user = citizenUser.value
+        val p = Parcel(
+            ulpin = newUlpin,
+            surveyNumber = surveyNum,
+            ownerName = user.name,
+            village = village.ifBlank { user.village },
+            taluka = user.taluka,
+            district = user.district,
+            state = user.state,
+            areaHectares = area,
+            landType = "Agricultural",
+            healthScore = 95,
+            encumbranceText = "Clear Title - Newly Registered Parcel",
+            taxAnnual = 3200.0,
+            taxPaid = true,
+            mutationStatus = "Clear",
+            lastUpdated = "Today"
+        )
+        repository.addParcel(p)
+        syncToastMessage.value = "New parcel registered: $newUlpin"
+    }
+
+    fun toggleOfflineSync(enabled: Boolean) {
+        repository.toggleOfflineSync(enabled)
+        syncToastMessage.value = if (enabled) "Offline sync active (2.4 MB cached)" else "Offline sync disabled"
+    }
+
+    fun updateLanguage(lang: String) {
+        repository.updateLanguage(lang)
+        syncToastMessage.value = "Language set to $lang"
+    }
+
+    fun updateSecurityPin(newPin: String): Boolean {
+        val success = repository.updateSecurityPin(newPin)
+        if (success) {
+            showChangePinDialog.value = false
+            syncToastMessage.value = "Digital passbook PIN updated"
+        }
+        return success
+    }
+
+    fun syncAccount() {
+        syncToastMessage.value = "Aadhaar e-KYC & Cadastre token synchronized"
+    }
+
+    fun dismissToast() {
+        syncToastMessage.value = null
     }
 
     fun approveMutation(applicationId: String) {

@@ -17,6 +17,8 @@ import com.example.bhusabha.ui.OfficialDashboardScreen
 import com.example.bhusabha.ui.OfficialLoginSheet
 import com.example.bhusabha.ui.PersonaWelcomeScreen
 
+import com.example.bhusabha.ui.CitizenProfileScreen
+
 @Composable
 fun MainNavigation(
     modifier: Modifier = Modifier,
@@ -43,6 +45,29 @@ fun MainNavigation(
             entry<CitizenDashboardNavKey> {
                 CitizenDashboardScreen(
                     viewModel = viewModel,
+                    onNavigateProfile = {
+                        backStack.add(CitizenProfileNavKey)
+                    },
+                    onLogout = {
+                        backStack.clear()
+                        backStack.add(WelcomeNavKey)
+                    },
+                    modifier = modifier
+                )
+            }
+            entry<CitizenProfileNavKey> {
+                CitizenProfileScreen(
+                    viewModel = viewModel,
+                    onBack = {
+                        if (backStack.size > 1) {
+                            backStack.removeAt(backStack.size - 1)
+                        }
+                    },
+                    onNavigateHome = {
+                        if (backStack.size > 1 && backStack.last() == CitizenProfileNavKey) {
+                            backStack.removeAt(backStack.size - 1)
+                        }
+                    },
                     onLogout = {
                         backStack.clear()
                         backStack.add(WelcomeNavKey)

@@ -16,8 +16,8 @@ class BhuSabhaRepository {
     private val _currentPersona = MutableStateFlow(UserPersona.GUEST)
     val currentPersona: StateFlow<UserPersona> = _currentPersona.asStateFlow()
 
-    private val _citizenUser = MutableStateFlow<CitizenUser?>(null)
-    val citizenUser: StateFlow<CitizenUser?> = _citizenUser.asStateFlow()
+    private val _citizenUser = MutableStateFlow(CitizenUser())
+    val citizenUser: StateFlow<CitizenUser> = _citizenUser.asStateFlow()
 
     private val _officialUser = MutableStateFlow<OfficialUser?>(null)
     val officialUser: StateFlow<OfficialUser?> = _officialUser.asStateFlow()
@@ -28,7 +28,7 @@ class BhuSabhaRepository {
     private val _parcels = MutableStateFlow(
         listOf(
             Parcel(
-                ulpin = "MH-PUN-2024-009182",
+                ulpin = "IN-MH-401102-8819",
                 surveyNumber = "142/2A",
                 ownerName = "Rameshwar Prasad Sharma",
                 village = "Wagholi",
@@ -45,7 +45,7 @@ class BhuSabhaRepository {
                 lastUpdated = "14-Aug-2026"
             ),
             Parcel(
-                ulpin = "MH-PUN-2024-004312",
+                ulpin = "IN-MH-401102-9024",
                 surveyNumber = "89/1B",
                 ownerName = "Rameshwar Prasad Sharma",
                 village = "Lohegaon",
@@ -60,6 +60,23 @@ class BhuSabhaRepository {
                 taxPaid = true,
                 mutationStatus = "Clear",
                 lastUpdated = "02-Jul-2026"
+            ),
+            Parcel(
+                ulpin = "IN-MH-401102-3118",
+                surveyNumber = "56/4",
+                ownerName = "Rameshwar Prasad Sharma",
+                village = "Wagholi",
+                taluka = "Haveli",
+                district = "Pune",
+                state = "Maharashtra",
+                areaHectares = 1.10,
+                landType = "Agricultural",
+                healthScore = 96,
+                encumbranceText = "Clear Title - Digitally Signed RoR",
+                taxAnnual = 2100.0,
+                taxPaid = true,
+                mutationStatus = "Clear",
+                lastUpdated = "19-Sep-2026"
             ),
             Parcel(
                 ulpin = "MH-PUN-2024-007741",
@@ -77,23 +94,6 @@ class BhuSabhaRepository {
                 taxPaid = false,
                 mutationStatus = "Discrepancy Flagged",
                 lastUpdated = "28-Sep-2026"
-            ),
-            Parcel(
-                ulpin = "MH-PUN-2024-003119",
-                surveyNumber = "77/3",
-                ownerName = "Sunita Patil",
-                village = "Hadapsar",
-                taluka = "Haveli",
-                district = "Pune",
-                state = "Maharashtra",
-                areaHectares = 3.10,
-                landType = "Agricultural",
-                healthScore = 91,
-                encumbranceText = "Clear Title - Bank Lien Discharged",
-                taxAnnual = 3800.0,
-                taxPaid = true,
-                mutationStatus = "Under Review",
-                lastUpdated = "10-Oct-2026"
             )
         )
     )
@@ -103,7 +103,7 @@ class BhuSabhaRepository {
         listOf(
             MutationApplication(
                 id = "MUT-2026-9041",
-                ulpin = "MH-PUN-2024-009182",
+                ulpin = "IN-MH-401102-8819",
                 applicantName = "Ananya Sharma",
                 currentOwner = "Rameshwar Prasad Sharma",
                 proposedOwner = "Ananya Sharma",
@@ -124,18 +124,6 @@ class BhuSabhaRepository {
                 status = MutationStatus.DISCREPANCY_FLAGGED,
                 riskScore = 78,
                 discrepancyNote = "Declared cadastral area (1.35 Ha) exceeds revenue map survey record (1.20 Ha)"
-            ),
-            MutationApplication(
-                id = "MUT-2026-7611",
-                ulpin = "MH-PUN-2024-003119",
-                applicantName = "Rohan Patil",
-                currentOwner = "Sunita Patil",
-                proposedOwner = "Rohan Patil",
-                deedType = "Gift Deed (Khatedar)",
-                submissionDate = "12-Oct-2026",
-                status = MutationStatus.PENDING_INSPECTION,
-                riskScore = 22,
-                discrepancyNote = null
             )
         )
     )
@@ -143,17 +131,64 @@ class BhuSabhaRepository {
 
     fun authenticateCitizen(aadhaarOrMobile: String, otp: String): Boolean {
         if (otp.length == 6) {
-            val user = CitizenUser(
-                aadhaarMasked = if (aadhaarOrMobile.length >= 4) "XXXX-XXXX-" + aadhaarOrMobile.takeLast(4) else "XXXX-XXXX-4892",
-                name = "Rameshwar Prasad Sharma",
-                mobileNumber = "+91 98234 10982",
-                village = "Wagholi",
-                taluka = "Haveli",
-                district = "Pune",
-                state = "Maharashtra"
-            )
-            _citizenUser.value = user
+            val clean = aadhaarOrMobile.replace(" ", "").replace("-", "")
+            val isAadhaar = clean.length >= 12
+            _citizenUser.update { user ->
+                user.copy(
+                    aadhaarMasked = if (isAadhaar) "•••• •••• " + clean.takeLast(4) else user.aadhaarMasked,
+                    rawAadhaar = if (isAadhaar) clean else user.rawAadhaar,
+                    mobileNumber = if (!isAadhaar && clean.length >= 5) "+91 " + clean.take(5) + " •••••" else user.mobileNumber,
+                    rawMobile = if (!isAadhaar) clean else user.rawMobile,
+                    eKycVerified = true
+                )
+            }
             _currentPersona.value = UserPersona.CITIZEN
+            return true
+        }
+        return false
+    }
+
+    fun updateCitizenProfile(
+        name: String,
+        email: String,
+        mobile: String,
+        village: String,
+        taluka: String,
+        district: String = "",
+        state: String = ""
+    ) {
+        _citizenUser.update { current ->
+            val cleanMobile = mobile.replace("+91", "").trim()
+            val formattedMobile = if (cleanMobile.length >= 5) "+91 " + cleanMobile.take(5) + " •••••" else current.mobileNumber
+            current.copy(
+                name = name.ifBlank { current.name },
+                email = email.ifBlank { current.email },
+                rawMobile = mobile.ifBlank { current.rawMobile },
+                mobileNumber = formattedMobile,
+                village = village.ifBlank { current.village },
+                taluka = taluka.ifBlank { current.taluka },
+                district = district.ifBlank { current.district },
+                state = state.ifBlank { current.state }
+            )
+        }
+    }
+
+    fun addParcel(parcel: Parcel) {
+        _parcels.update { listOf(parcel) + it }
+    }
+
+    fun toggleOfflineSync(enabled: Boolean) {
+        _citizenUser.update { it.copy(offlineSyncEnabled = enabled) }
+        _isOfflineReady.value = enabled
+    }
+
+    fun updateLanguage(lang: String) {
+        _citizenUser.update { it.copy(preferredLanguage = lang) }
+    }
+
+    fun updateSecurityPin(newPin: String): Boolean {
+        if (newPin.length == 4) {
+            _citizenUser.update { it.copy(passbookPin = newPin, passbookPinConfigured = true) }
             return true
         }
         return false
@@ -177,7 +212,6 @@ class BhuSabhaRepository {
 
     fun logout() {
         _currentPersona.value = UserPersona.GUEST
-        _citizenUser.value = null
         _officialUser.value = null
     }
 
@@ -188,7 +222,6 @@ class BhuSabhaRepository {
                 if (it.id == applicationId) it.copy(status = MutationStatus.APPROVED) else it
             }
         }
-        // Dynamically update parcel owner in the parcels registry!
         _parcels.update { list ->
             list.map {
                 if (it.ulpin == app.ulpin) {

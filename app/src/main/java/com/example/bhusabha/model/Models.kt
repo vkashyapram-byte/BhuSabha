@@ -7,15 +7,35 @@ enum class UserPersona {
 }
 
 data class CitizenUser(
-    val aadhaarMasked: String,
-    val name: String,
-    val mobileNumber: String,
-    val village: String,
-    val taluka: String,
-    val district: String,
-    val state: String,
-    val eKycVerified: Boolean = true
-)
+    val citizenId: String = "BHU-MH-89210-C",
+    val name: String = "Rameshwar Prasad Sharma",
+    val rawAadhaar: String = "982341094892",
+    val aadhaarMasked: String = "•••• •••• 4892",
+    val mobileNumber: String = "+91 98234 •••••",
+    val rawMobile: String = "+91 98234 10982",
+    val email: String = "r.sharma.agri@govin.mock",
+    val village: String = "Wagholi",
+    val taluka: String = "Haveli",
+    val district: String = "Pune Rural District",
+    val state: String = "Maharashtra",
+    val eKycVerified: Boolean = true,
+    val biometricLockActive: Boolean = true,
+    val offlineSyncEnabled: Boolean = true,
+    val cachedDataSize: String = "2.4 MB cached",
+    val preferredLanguage: String = "English",
+    val passbookPinConfigured: Boolean = true,
+    val passbookPin: String = "1234"
+) {
+    val initials: String
+        get() {
+            val parts = name.trim().split("\\s+".toRegex()).filter { it.isNotBlank() }
+            return when {
+                parts.size >= 2 -> "${parts.first().first().uppercase()}${parts.last().first().uppercase()}"
+                parts.isNotEmpty() && parts.first().isNotEmpty() -> parts.first().take(2).uppercase()
+                else -> "RS"
+            }
+        }
+}
 
 data class OfficialUser(
     val employeeId: String,
